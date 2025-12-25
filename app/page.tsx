@@ -1,11 +1,13 @@
 "use client";
 
-import ProductTable from "@/components/ProductTable";
 import { fetchProducts, deleteProduct, duplicateProduct } from "@/lib/api";
 import useSWR, { mutate } from "swr";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import styles from "./Products.module.css";
+
+type SortOption = "name-asc" | "name-desc" | "quantity-asc" | "quantity-desc" | "date-asc" | "date-desc";
+type StatusFilter = "all" | "in-stock" | "low-stock" | "out-of-stock";
 
 export default function Products() {
   const { data: products, error } = useSWR(
@@ -13,8 +15,85 @@ export default function Products() {
     fetchProducts
   );
 
+  // State
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [duplicatingId, setDuplicatingId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedStatus, setSelectedStatus] = useState<StatusFilter>("all");
+  const [sortBy, setSortBy] = useState<SortOption>("name-asc");
+  const [showFilters, setShowFilters] = useState(false);
+
+  // Get unique categories
+  const categories = useMemo(() => {
+    if (!products) return [];
+    const cats = new Set(products.map((p: any) => p.category).filter(Boolean));
+    return ["all", ...Array.from(cats)];
+  }, [products]);
+
+  // Filter and Sort Products
+  const filteredAndSortedProducts = useMemo(() => {
+    if (!products) return [];
+
+    let filtered = [...products];
+
+    // Search filter
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter((p: any) =>
+        p.name.toLowerCase().includes(query) ||
+        p.sku.toLowerCase().includes(query) ||
+        p.description?.toLowerCase().includes(query)
+      );
+    }
+
+    // Category filter
+    if (selectedCategory !== "all") {
+      filtered = filtered.filter((p: any) => p.category === selectedCategory);
+    }
+
+    // Status filter
+    if (selectedStatus !== "all") {
+      filtered = filtered.filter((p: any) => {
+        const quantity = Number(p.quantity ?? 0);
+        const threshold = Number(p.lowStockThreshold ?? 0);
+
+        if (selectedStatus === "out-of-stock") return quantity === 0;
+        if (selectedStatus === "low-stock") return quantity > 0 && quantity < threshold;
+        if (selectedStatus === "in-stock") return quantity >= threshold;
+        return true;
+      });
+    }
+
+    // Sort
+    filtered.sort((a: any, b: any) => {
+      switch (sortBy) {
+        case "name-asc":
+          return a.name.localeCompare(b.name);
+        case "name-desc":
+          return b.name.localeCompare(a.name);
+        case "quantity-asc":
+          return (a.quantity ?? 0) - (b.quantity ?? 0);
+        case "quantity-desc":
+          return (b.quantity ?? 0) - (a.quantity ?? 0);
+        case "date-asc":
+          return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+        case "date-desc":
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        default:
+          return 0;
+      }
+    });
+
+    return filtered;
+  }, [products, searchQuery, selectedCategory, selectedStatus, sortBy]);
+
+  const clearFilters = () => {
+    setSearchQuery("");
+    setSelectedCategory("all");
+    setSelectedStatus("all");
+    setSortBy("name-asc");
+  };
 
   const handleDelete = async (id: string, name: string) => {
     if (!confirm(`Are you sure you want to delete "${name}"?\n\nThis action cannot be undone.`)) {
@@ -84,7 +163,6 @@ export default function Products() {
             </div>
             <div className={styles.skeletonButton}></div>
           </div>
-
           <div className={styles.grid}>
             {[1, 2, 3, 4, 5, 6].map((i) => (
               <div key={i} className={styles.skeletonCard}>
@@ -138,28 +216,144 @@ export default function Products() {
           </Link>
         </div>
 
+        {/* Search and Filters */}
+        <div className={styles.filterSection}>
+          {/* Search Bar */}
+          <div className={styles.searchBar}>
+            <svg className={styles.searchIcon} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input
+              type="text"
+              placeholder="Search by name, SKU, or description..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className={styles.searchInput}
+            />
+            {searchQuery && (
+              <button onClick={() => setSearchQuery("")} className={styles.clearButton}>
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            )}
+          </div>
+
+          {/* Filter Toggle */}
+          <div className={styles.filterActions}>
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className={styles.filterToggle}
+            >
+              <svg className={styles.iconSmall} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+              </svg>
+              Filters
+              {(selectedCategory !== "all" || selectedStatus !== "all") && (
+                <span className={styles.filterBadge}>
+                  {(selectedCategory !== "all" ? 1 : 0) + (selectedStatus !== "all" ? 1 : 0)}
+                </span>
+              )}
+            </button>
+          </div>
+        </div>
+
+        {/* Advanced Filters */}
+        {showFilters && (
+          <div className={styles.filterPanel}>
+            <div className={styles.filterGrid}>
+              {/* Category Filter */}
+              <div className={styles.filterGroup}>
+                <label className={styles.filterLabel}>Category</label>
+                <select
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                  className={styles.filterSelect}
+                >
+                  {categories.map((cat) => (
+                    <option key ={cat} value={cat as string}>
+                      {(cat as string) === "all" ? "All Categories" : cat}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Status Filter */}
+              <div className={styles.filterGroup}>
+                <label className={styles.filterLabel}>Status</label>
+                <select
+                  value={selectedStatus}
+                  onChange={(e) => setSelectedStatus(e.target.value as StatusFilter)}
+                  className={styles.filterSelect}
+                >
+                  <option value="all">All Status</option>
+                  <option value="in-stock">In Stock</option>
+                  <option value="low-stock">Low Stock</option>
+                  <option value="out-of-stock">Out of Stock</option>
+                </select>
+              </div>
+
+              {/* Sort Options */}
+              <div className={styles.filterGroup}>
+                <label className={styles.filterLabel}>Sort By</label>
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value as SortOption)}
+                  className={styles.filterSelect}
+                >
+                  <option value="name-asc">Name (A-Z)</option>
+                  <option value="name-desc">Name (Z-A)</option>
+                  <option value="quantity-asc">Quantity (Low-High)</option>
+                  <option value="quantity-desc">Quantity (High-Low)</option>
+                  <option value="date-asc">Date Added (Oldest)</option>
+                  <option value="date-desc">Date Added (Newest)</option>
+                </select>
+              </div>
+            </div>
+
+            <div className={styles.filterFooter}>
+              <button onClick={clearFilters} className={styles.clearFiltersBtn}>
+                Clear All Filters
+              </button>
+              <span className={styles.resultCount}>
+                Showing {filteredAndSortedProducts.length} of {products.length} products
+              </span>
+            </div>
+          </div>
+        )}
+
         {/* Products Grid */}
-        {products.length === 0 ? (
+        {filteredAndSortedProducts.length === 0 ? (
           <div className={styles.emptyState}>
             <div className={styles.emptyContent}>
               <div className={styles.emptyIconWrapper}>
                 <svg className={styles.emptyIcon} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
               </div>
-              <h2 className={styles.emptyTitle}>No products yet</h2>
-              <p className={styles.emptyText}>Get started by creating your first product</p>
-              <Link href="/products/new" className={styles.emptyButton}>
-                <svg className={styles.iconSmall} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
-                Create Product
-              </Link>
+              <h2 className={styles.emptyTitle}>No products found</h2>
+              <p className={styles.emptyText}>
+                {searchQuery || selectedCategory !== "all" || selectedStatus !== "all"
+                  ? "Try adjusting your filters or search query"
+                  : "Get started by creating your first product"}
+              </p>
+              {(searchQuery || selectedCategory !== "all" || selectedStatus !== "all") ? (
+                <button onClick={clearFilters} className={styles.emptyButton}>
+                  Clear Filters
+                </button>
+              ) : (
+                <Link href="/products/new" className={styles.emptyButton}>
+                  <svg className={styles.iconSmall} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  </svg>
+                  Create Product
+                </Link>
+              )}
             </div>
           </div>
         ) : (
           <div className={styles.grid}>
-            {products.map((p: any) => {
+            {filteredAndSortedProducts.map((p: any) => {
               const quantity = Number(p.quantity ?? 0);
               const threshold = Number(p.lowStockThreshold ?? 0);
 
@@ -177,9 +371,8 @@ export default function Products() {
                 cardClass = `${styles.card} ${styles.cardLow}`;
               }
 
-              // Get product image
               const productImage = p.primaryImage || (p.images && p.images.length > 0 ? p.images[0] : null);
-              const imageUrl = productImage 
+              const imageUrl = productImage
                 ? `${process.env.NEXT_PUBLIC_API_URL?.replace('/api', '')}${productImage}`
                 : null;
 
@@ -189,12 +382,11 @@ export default function Products() {
                   <div className={styles.cardHeader}>
                     <div className={styles.productIconLarge}>
                       {imageUrl ? (
-                        <img 
-                          src={imageUrl} 
+                        <img
+                          src={imageUrl}
                           alt={p.name}
                           className={styles.productImage}
                           onError={(e) => {
-                            // Fallback to icon if image fails to load
                             e.currentTarget.style.display = 'none';
                             e.currentTarget.nextElementSibling?.classList.remove(styles.hidden);
                           }}
@@ -223,6 +415,7 @@ export default function Products() {
                   {/* Card Body */}
                   <div className={styles.cardBody}>
                     <h3 className={styles.productTitle}>{p.name}</h3>
+                    {p.sku && <p className={styles.productSku}>SKU: {p.sku}</p>}
 
                     <div className={styles.metrics}>
                       <div className={styles.metric}>
@@ -250,7 +443,7 @@ export default function Products() {
                     </div>
                   </div>
 
-                  {/* Card Footer - Action Buttons */}
+                  {/* Card Footer */}
                   <div className={styles.cardFooter}>
                     <div className={styles.actionButtons}>
                       <Link href={`/products/${p._id}/edit`} className={styles.editButton} title="Edit Product">
