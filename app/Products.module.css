@@ -1,0 +1,665 @@
+.container {
+  min-height: 100vh;
+  background: #f8fafc;
+  padding: 2rem 1rem;
+}
+
+@media (min-width: 768px) {
+  .container {
+    padding: 3rem 2rem;
+  }
+}
+
+.wrapper {
+  max-width: 90rem;
+  margin: 0 auto;
+}
+
+/* Header */
+.header {
+  margin-bottom: 3rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  background: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.headerLeft {
+  flex: 1;
+}
+
+.titleGroup {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #334155;
+  margin: 0;
+}
+
+.stats {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.statBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  background: #f1f5f9;
+  color: #475569;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-radius: 9999px;
+  border: 1px solid #e2e8f0;
+}
+
+.subtitle {
+  color: #64748b;
+  font-size: 1rem;
+  margin: 0;
+}
+
+.addButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.875rem 1.75rem;
+  background: #051f48;
+  color: white;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s;
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+  font-size: 0.95rem;
+}
+
+.addButton:hover {
+  background: #051f48;
+  box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
+}
+
+.addButton:active {
+  transform: translateY(0);
+}
+
+/* Grid */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  }
+}
+
+/* Card */
+.card {
+  background: white;
+  border-radius: 1rem;
+  overflow: hidden;
+  transition: all 0.2s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 2px solid #f1f5f9;
+  position: relative;
+}
+
+.card:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-color: #e2e8f0;
+}
+
+.cardLow {
+  border-color: #fbbf24;
+}
+
+.cardDead {
+  border-color: #ef4444;
+}
+
+.cardHeader {
+  padding: 1.5rem;
+  background: #f8fafc;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.productIconLarge {
+  width: 3.5rem;
+  height: 3.5rem;
+  background: #051f48;
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.productSvg {
+  width: 2rem;
+  height: 2rem;
+  color: white;
+}
+
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.statusDot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+}
+
+.statusOk {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.statusOk .statusDot {
+  background: #10b981;
+}
+
+.statusLow {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.statusLow .statusDot {
+  background: #f59e0b;
+}
+
+.statusDead {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.statusDead .statusDot {
+  background: #ef4444;
+}
+
+.cardBody {
+  padding: 1.5rem;
+}
+
+.productTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #334155;
+  margin: 0 0 1.5rem 0;
+}
+
+.metrics {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.metric {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+}
+
+.metricLabel {
+  font-size: 0.75rem;
+  color: #64748b;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.metricValue {
+  font-size: 1.875rem;
+  font-weight: 800;
+  color: #475569;
+}
+
+.metricDivider {
+  width: 1px;
+  height: 2.5rem;
+  background: #e2e8f0;
+}
+
+.progressContainer {
+  margin-top: 1rem;
+}
+
+.progressBar {
+  width: 100%;
+  height: 0.5rem;
+  background: #e2e8f0;
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 0.5s ease-in-out;
+}
+
+.cardFooter {
+  padding: 1rem 1.5rem;
+  background: #f8fafc;
+  border-top: 1px solid #f1f5f9;
+  position: relative;
+  z-index: 5;
+  display: flex;
+  justify-content: center;
+}
+
+.manageButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.5rem 1rem;
+  background: #051f48;
+  color: white;
+  border-radius: 0.375rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s;
+  font-size: 0.8rem;
+  position: relative;
+  z-index: 10;
+  pointer-events: all;
+  cursor: pointer;
+}
+
+.manageButton:hover {
+  background: #051f48;
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+}
+
+.manageButton:active {
+  transform: scale(0.98);
+}
+
+/* Icons */
+.iconWhite {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+.iconSmall {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+.iconXLarge {
+  width: 3.5rem;
+  height: 3.5rem;
+}
+
+/* Empty State */
+.emptyState {
+  background: white;
+  border-radius: 1rem;
+  padding: 4rem 2rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.emptyContent {
+  text-align: center;
+  max-width: 28rem;
+  margin: 0 auto;
+}
+
+.emptyIconWrapper {
+  width: 6rem;
+  height: 6rem;
+  background: #eff6ff;
+  border-radius: 1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.emptyIcon {
+  width: 3rem;
+  height: 3rem;
+  color: #93c5fd;
+}
+
+.emptyTitle {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #334155;
+  margin: 0 0 0.75rem 0;
+}
+
+.emptyText {
+  color: #64748b;
+  font-size: 1.125rem;
+  margin: 0 0 2rem 0;
+}
+
+.emptyButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 1rem 2rem;
+  background: #051f48;
+  color: white;
+  border-radius: 0.5rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.2s;
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+  font-size: 1rem;
+}
+
+.emptyButton:hover {
+  background: #051f48;
+  box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
+}
+
+.emptyButton:active {
+  transform: translateY(0);
+}
+
+/* Error State */
+.errorState {
+  background: white;
+  border-radius: 1rem;
+  padding: 4rem 2rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  max-width: 32rem;
+  margin: 0 auto;
+}
+
+.errorIcon {
+  width: 6rem;
+  height: 6rem;
+  background: #fee2e2;
+  border-radius: 1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.errorIcon svg {
+  color: #dc2626;
+}
+
+.errorTitle {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #334155;
+  margin: 0 0 0.75rem 0;
+}
+
+.errorText {
+  color: #64748b;
+  font-size: 1.125rem;
+  margin: 0 0 2rem 0;
+}
+
+.retryButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 1rem 2rem;
+  background: #051f48;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+  font-size: 1rem;
+}
+
+.retryButton:hover {
+  background: #051f48;
+  box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
+}
+
+.retryButton:active {
+  transform: translateY(0);
+}
+
+/* Loading Skeletons */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.skeletonTitle {
+  height: 3rem;
+  width: 15rem;
+  background: linear-gradient(
+    90deg,
+    #f1f5f9 0%,
+    #e2e8f0 50%,
+    #f1f5f9 100%
+  );
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite;
+  border-radius: 0.5rem;
+}
+
+.skeletonBadge {
+  height: 2rem;
+  width: 7rem;
+  background: linear-gradient(
+    90deg,
+    #f1f5f9 0%,
+    #e2e8f0 50%,
+    #f1f5f9 100%
+  );
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite;
+  border-radius: 9999px;
+}
+
+.skeletonSubtitle {
+  height: 1.5rem;
+  width: 20rem;
+  background: linear-gradient(
+    90deg,
+    #f1f5f9 0%,
+    #e2e8f0 50%,
+    #f1f5f9 100%
+  );
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite;
+  border-radius: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.skeletonButton {
+  height: 3.5rem;
+  width: 10rem;
+  background: linear-gradient(
+    90deg,
+    #f1f5f9 0%,
+    #e2e8f0 50%,
+    #f1f5f9 100%
+  );
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite;
+  border-radius: 0.5rem;
+}
+
+.skeletonCard {
+  background: white;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.skeletonCardHeader {
+  padding: 1.5rem;
+  background: #f8fafc;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.skeletonIcon {
+  width: 3.5rem;
+  height: 3.5rem;
+  background: linear-gradient(
+    90deg,
+    #e2e8f0 0%,
+    #cbd5e1 50%,
+    #e2e8f0 100%
+  );
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite;
+  border-radius: 0.75rem;
+}
+
+.skeletonStatus {
+  height: 2rem;
+  width: 6rem;
+  background: linear-gradient(
+    90deg,
+    #e2e8f0 0%,
+    #cbd5e1 50%,
+    #e2e8f0 100%
+  );
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite;
+  border-radius: 9999px;
+}
+
+.skeletonCardBody {
+  padding: 1.5rem;
+}
+
+.skeletonProductTitle {
+  height: 2rem;
+  width: 70%;
+  background: linear-gradient(
+    90deg,
+    #e2e8f0 0%,
+    #cbd5e1 50%,
+    #e2e8f0 100%
+  );
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite;
+  border-radius: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.skeletonMetrics {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.skeletonMetric {
+  flex: 1;
+  height: 3.5rem;
+  background: linear-gradient(
+    90deg,
+    #e2e8f0 0%,
+    #cbd5e1 50%,
+    #e2e8f0 100%
+  );
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite;
+  border-radius: 0.5rem;
+}
+
+.skeletonProgress {
+  height: 0.5rem;
+  width: 100%;
+  background: linear-gradient(
+    90deg,
+    #e2e8f0 0%,
+    #cbd5e1 50%,
+    #e2e8f0 100%
+  );
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite;
+  border-radius: 9999px;
+  margin-top: 1rem;
+}
+
+.skeletonCardFooter {
+  padding: 1rem 1.5rem;
+  background: #f8fafc;
+  border-top: 1px solid #f1f5f9;
+}
+
+.skeletonManageButton {
+  height: 2rem;
+  width: 7rem;
+  margin: 0 auto;
+  background: linear-gradient(
+    90deg,
+    #e2e8f0 0%,
+    #cbd5e1 50%,
+    #e2e8f0 100%
+  );
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite;
+  border-radius: 0.375rem;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .title {
+    font-size: 2rem;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .metrics {
+    gap: 1rem;
+  }
+
+  .metricValue {
+    font-size: 1.5rem;
+  }
+
+  .skeletonTitle {
+    width: 10rem;
+  }
+
+  .skeletonSubtitle {
+    width: 15rem;
+  }
+}
