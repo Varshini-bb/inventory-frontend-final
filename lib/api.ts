@@ -160,3 +160,72 @@ export const fetchStockHistory = async (id: string) =>
   fetch(`${API_URL}/stock/${id}`, { cache: "no-store" }).then((res) =>
     res.json()
   );
+
+
+// Notifications
+export const fetchNotifications = async (params?: { read?: boolean; dismissed?: boolean }) => {
+  const queryParams = new URLSearchParams();
+  if (params?.read !== undefined) queryParams.append('read', String(params.read));
+  if (params?.dismissed !== undefined) queryParams.append('dismissed', String(params.dismissed));
+  
+  const url = `${API_URL}/notifications${queryParams.toString() ? '?' + queryParams.toString() : ''}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error("Failed to fetch notifications");
+  return res.json();
+};
+
+export const markNotificationAsRead = async (id: string) => {
+  const res = await fetch(`${API_URL}/notifications/${id}/read`, {
+    method: "PUT",
+  });
+  if (!res.ok) throw new Error("Failed to mark notification as read");
+  return res.json();
+};
+
+export const markAllNotificationsAsRead = async () => {
+  const res = await fetch(`${API_URL}/notifications/read-all`, {
+    method: "PUT",
+  });
+  if (!res.ok) throw new Error("Failed to mark all notifications as read");
+  return res.json();
+};
+
+export const dismissNotification = async (id: string) => {
+  const res = await fetch(`${API_URL}/notifications/${id}/dismiss`, {
+    method: "PUT",
+  });
+  if (!res.ok) throw new Error("Failed to dismiss notification");
+  return res.json();
+};
+
+export const deleteNotification = async (id: string) => {
+  const res = await fetch(`${API_URL}/notifications/${id}`, {
+    method: "DELETE",
+  });
+  if (!res.ok) throw new Error("Failed to delete notification");
+  return res.json();
+};
+
+export const getNotificationSettings = async () => {
+  const res = await fetch(`${API_URL}/settings`);
+  if (!res.ok) throw new Error("Failed to fetch settings");
+  return res.json();
+};
+
+export const updateNotificationSettings = async (settings: any) => {
+  const res = await fetch(`${API_URL}/settings`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(settings),
+  });
+  if (!res.ok) throw new Error("Failed to update settings");
+  return res.json();
+};
+
+export const triggerNotificationCheck = async () => {
+  const res = await fetch(`${API_URL}/notifications/check`, {
+    method: "POST",
+  });
+  if (!res.ok) throw new Error("Failed to trigger check");
+  return res.json();
+};
