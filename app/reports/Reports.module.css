@@ -1,0 +1,264 @@
+.container {
+  min-height: 100vh;
+  background: #f8fafc;
+  padding: 2rem 1rem;
+}
+
+.wrapper {
+  max-width: 90rem;
+  margin: 0 auto;
+}
+
+/* Header */
+.header {
+  margin-bottom: 2rem;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #64748b;
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+  transition: color 0.2s;
+}
+
+.backLink:hover {
+  color: #3b82f6;
+}
+
+.backIcon {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #334155;
+  margin: 0 0 0.5rem 0;
+}
+
+.subtitle {
+  color: #64748b;
+  font-size: 1rem;
+  margin: 0;
+}
+
+/* Export Section */
+.exportSection {
+  margin-bottom: 3rem;
+}
+
+.sectionTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #334155;
+  margin: 0 0 1rem 0;
+}
+
+.exportCard {
+  background: white;
+  border-radius: 0.75rem;
+  padding: 2rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.exportOptions {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.formGroup {
+  flex: 1;
+  min-width: 250px;
+}
+
+.label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 0.5rem;
+}
+
+.select {
+  width: 100%;
+  padding: 0.75rem;
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 0.5rem;
+  outline: none;
+  transition: all 0.2s;
+  font-size: 0.95rem;
+  color: #334155;
+  cursor: pointer;
+}
+
+.select:focus {
+  border-color: #3b82f6;
+}
+
+.exportButtons {
+  display: flex;
+  gap: 1rem;
+}
+
+.exportBtn,
+.printBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.95rem;
+}
+
+.exportBtn {
+  background: #10b981;
+  color: white;
+}
+
+.exportBtn:hover {
+  background: #059669;
+}
+
+.printBtn {
+  background: #64748b;
+  color: white;
+}
+
+.printBtn:hover {
+  background: #475569;
+}
+
+.btnIcon {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+/* Reports Grid */
+.reportsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.reportCard {
+  background: white;
+  border-radius: 0.75rem;
+  padding: 2rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  text-decoration: none;
+  transition: all 0.2s;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border: 2px solid transparent;
+}
+
+.reportCard:hover {
+  border-color: #3b82f6;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.reportIcon {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.reportIcon svg {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.reportTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #334155;
+  margin: 0 0 0.5rem 0;
+}
+
+.reportDescription {
+  color: #64748b;
+  font-size: 0.95rem;
+  margin: 0;
+  flex: 1;
+}
+
+.reportArrow {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  color: #cbd5e1;
+  transition: all 0.2s;
+}
+
+.reportCard:hover .reportArrow {
+  color: #3b82f6;
+  transform: translateX(4px);
+}
+
+.reportArrow svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* Print Styles */
+@media print {
+  .exportSection,
+  .backLink {
+    display: none;
+  }
+
+  .container {
+    background: white;
+  }
+
+  .reportCard {
+    break-inside: avoid;
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .exportOptions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .exportButtons {
+    flex-direction: column;
+  }
+
+  .exportBtn,
+  .printBtn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .reportsGrid {
+    grid-template-columns: 1fr;
+  }
+}
