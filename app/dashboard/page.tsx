@@ -18,6 +18,7 @@ import {
   ResponsiveContainer
 } from "recharts";
 import styles from "./Dashboard.module.css";
+import { fetchDashboard } from '@/lib/api';
 
 const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
 
@@ -29,18 +30,17 @@ export default function Dashboard() {
     loadDashboard();
   }, []);
 
-  const loadDashboard = async () => {
-    try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/dashboard`);
-      const data = await res.json();
-      console.log("Dashboard data:", data); // Debug log
-      setStats(data);
-      setLoading(false);
-    } catch (error) {
-      console.error("Error loading dashboard:", error);
-      setLoading(false);
-    }
-  };
+ const loadDashboard = async () => {
+  try {
+    const data = await fetchDashboard();
+    console.log("Dashboard data:", data);
+    setStats(data);
+    setLoading(false);
+  } catch (error) {
+    console.error("Error loading dashboard:", error);
+    setLoading(false);
+  }
+};
 
   if (loading) {
     return (
@@ -285,7 +285,7 @@ export default function Dashboard() {
                   <tbody>
                     {stats.recentMovements.map((movement: any) => (
                       <tr key={movement._id}>
-                        <td>{movement.product?.name || 'N/A'}</td>
+                        <td>{movement.productId?.name || 'N/A'}</td>
                         <td>
                           <span className={movement.type === 'IN' ? styles.badgeIn : styles.badgeOut}>
                             {movement.type}

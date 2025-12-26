@@ -10,10 +10,12 @@ type SortOption = "name-asc" | "name-desc" | "quantity-asc" | "quantity-desc" | 
 type StatusFilter = "all" | "in-stock" | "low-stock" | "out-of-stock";
 
 export default function Products() {
-  const { data: products, error } = useSWR(
+  const { data, error } = useSWR(
     `${process.env.NEXT_PUBLIC_API_URL}/products`,
     fetchProducts
   );
+
+  const products = data && Array.isArray(data) ? data : null;
 
   // State
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -508,7 +510,7 @@ export default function Products() {
                         {deletingId === p._id ? "..." : "Delete"}
                       </button>
 
-                      <Link href={`/stock/${p._id}`} className={styles.stockButton} title="Manage Stock">
+                      <Link href={`/products/${p._id}`} className={styles.stockButton} title="Manage Stock">
                         <svg className={styles.iconSmall} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
                         </svg>
