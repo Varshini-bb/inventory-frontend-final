@@ -1,15 +1,9 @@
-// Base URL for API requests
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
-const API_URL = `${API_BASE}/api`;
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
-// Log the API URL in development for debugging
-console.log('API_URL:', API_URL);
-console.log('process.env.NEXT_PUBLIC_API_URL:', process.env.NEXT_PUBLIC_API_URL);
-
-// Test the API URL
+// Test API connection
 const testApiConnection = async () => {
   try {
-    const response = await fetch(`${API_URL}/products`);
+    const response = await fetch(`${API_URL}/api/products`); // ← Fixed
     console.log('API Connection Test:', response.status, response.statusText);
   } catch (error) {
     console.error('API Connection Error:', error);
@@ -20,48 +14,103 @@ testApiConnection();
 
 // Dashboard
 export const fetchDashboard = async () => {
-  const res = await fetch(`${API_URL}/dashboard`);
+  console.log("=== FETCH DASHBOARD CALLED ===");
+  console.log("API_URL:", API_URL);
+  const res = await fetch(`${API_URL}/api/dashboard`);
+  console.log("Response:", res.status);
   if (!res.ok) {
     throw new Error('Failed to fetch dashboard data');
   }
   return res.json();
 };
+
 // Products
-export const fetchProducts = async () =>
-  fetch(`${API_URL}/products`, { cache: "no-store" }).then(res => res.json());
+export const fetchProducts = async () => {
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
+    
+    const res = await fetch(`${API_URL}/api/products`, { // ← Fixed
+      signal: controller.signal,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
 
-export const fetchProduct = async (id: string) =>
-  fetch(`${API_URL}/products/${id}`, { cache: "no-store" }).then(res => res.json());
+    clearTimeout(timeoutId);
 
-export async function createProduct(data: {
-  name: string;
-  sku: string;
-  quantity?: number;
-  lowStockThreshold?: number;
-  description?: string;
-  category?: string;
-  tags?: string[];
-  unit?: string;
-  costPrice?: number;
-  sellingPrice?: number;
-  hasVariants?: boolean;
-  variants?: any[];
-}) {
-  const res = await fetch(`${API_URL}/products`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  });
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
 
-  if (!res.ok) {
-    throw new Error("Failed to create product");
+    const data = await res.json();
+    return data;
+  } catch (error: any) {
+    if (error.name === 'AbortError') {
+      console.error('Request timeout');
+    } else {
+      console.error('Error fetching products:', error);
+    }
+    throw error;
   }
+};
 
-  return res.json();
-}
+export const fetchProduct = async (id: string) => {
+  try {
+    const res = await fetch(`${API_URL}/api/products/${id}`); // ← Fixed
+    
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
 
+    return await res.json();
+  } catch (error) {
+    console.error('Error fetching product:', error);
+    throw error;
+  }
+};
+
+export const createProduct = async (productData: any) => {
+  try {
+    const res = await fetch(`${API_URL}/api/products`, { // ← Fixed
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(productData),
+    });
+
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+
+    return await res.json();
+  } catch (error) {
+    console.error('Error creating product:', error);
+    throw error;
+  }
+};
+
+export const updateProduct = async (id: string, productData: any) => {
+  try {
+    const res = await fetch(`${API_URL}/api/products/${id}`, { // ← Fixed
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(productData),
+    });
+
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+
+    return await res.json();
+  } catch (error) {
+    console.error('Error updating product:', error);
+    throw error;
+  }
+};
 // Stock Management
 // Stock Management
 export const updateStock = async (data: {
@@ -75,7 +124,7 @@ export const updateStock = async (data: {
   console.log('Request data:', data);
   
   try {
-    const res = await fetch(url, {
+    const res = await fetch(url, { // ← Already correct
       method: "POST",
       headers: { 
         "Content-Type": "application/json",
@@ -99,22 +148,6 @@ export const updateStock = async (data: {
   }
 };
 
-export async function updateProduct(id: string, data: any) {
-  const res = await fetch(`${API_URL}/products/${id}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  });
-
-  if (!res.ok) {
-    throw new Error("Failed to update product");
-  }
-
-  return res.json();
-}
-
 export const fetchStockHistory = async (id: string) => {
   const res = await fetch(`${API_URL}/api/stock/${id}`, { 
     cache: "no-store" 
@@ -128,17 +161,22 @@ export const fetchStockHistory = async (id: string) => {
   return res.json();
 };
 
-export async function deleteProduct(id: string) {
-  const res = await fetch(`${API_URL}/products/${id}`, {
-    method: "DELETE",
-  });
+export const deleteProduct = async (id: string) => {
+  try {
+    const res = await fetch(`${API_URL}/api/products/${id}`, { // ← Fixed
+      method: 'DELETE',
+    });
 
-  if (!res.ok) {
-    throw new Error("Failed to delete product");
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+
+    return await res.json();
+  } catch (error) {
+    console.error('Error deleting product:', error);
+    throw error;
   }
-
-  return res.json();
-}
+};
 
 export async function duplicateProduct(id: string) {
   const res = await fetch(`${API_URL}/products/${id}/duplicate`, {

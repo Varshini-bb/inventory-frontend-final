@@ -1,0 +1,219 @@
+// Base URL for API requests
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+const API_URL = `${API_BASE}/api`;
+
+// Check if we're in the browser environment
+const isBrowser = typeof window !== 'undefined';
+
+// Log the API URL in development for debugging
+if (process.env.NODE_ENV === 'development' && isBrowser) {
+  console.log('API_URL:', API_URL);
+  console.log('process.env.NEXT_PUBLIC_API_URL:', process.env.NEXT_PUBLIC_API_URL);
+}
+
+// Test the API connection
+const testApiConnection = async (): Promise<{
+  isConnected: boolean;
+  error?: string;
+  status?: number;
+}> => {
+  if (!isBrowser) return { isConnected: false, error: 'Not in browser environment' };
+  
+  try {
+    const response = await fetch(`${API_URL}/products`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      // Add a timeout for the fetch request (5 seconds)
+      signal: AbortSignal.timeout(5000)
+    });
+    
+    const isConnected = response.ok;
+    if (process.env.NODE_ENV === 'development') {
+      console.log('API Connection Test:', response.status, response.statusText);
+    }
+    
+    return { isConnected, status: response.status };
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    if (process.env.NODE_ENV === 'development') {
+      console.error('API Connection Error:', error);
+    }
+    return { isConnected: false, error: errorMessage };
+  }
+};
+
+// Test the connection when in browser and development mode
+if (isBrowser && process.env.NODE_ENV === 'development') {
+  testApiConnection().then(result => {
+    if (!result.isConnected) {
+      console.warn('API Connection Warning:', result.error || 'Failed to connect to the API server');
+      console.warn('Please ensure the backend server is running at:', API_BASE);
+      console.warn('If you want to change the API URL, set the NEXT_PUBLIC_API_URL environment variable');
+    }
+  });
+}
+
+// API request wrapper with better error handling
+const apiRequest = async (endpoint: string, options: RequestInit = {}) => {
+  try {
+    const response = await fetch(`${API_URL}${endpoint}`, {
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        ...options.headers,
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(
+        errorData.message || `API request failed with status ${response.status}`
+      );
+    }
+
+    return await response.json();
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(`API Request Error (${endpoint}):`, error.message);
+      throw new Error(`API request failed: ${error.message}`);
+    }
+    throw error;
+  }
+};
+
+// Dashboard
+export const fetchDashboard = async () => {
+  return apiRequest('/dashboard');
+};
+
+// Products
+export const fetchProducts = async () => {
+  return apiRequest('/products');
+};
+
+export const fetchProduct = async (id: string) => {
+  return apiRequest(`/products/${id}`);
+};
+
+export const createProduct = async (data: any) => {
+  return apiRequest('/products', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+};
+
+// Stock Management
+export const updateStock = async (data: {
+  productId: string;
+  type: 'IN' | 'OUT';
+  quantity: number;
+  note?: string;
+}) => {
+  return apiRequest('/stock', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+};
+
+export const updateProduct = async (id: string, data: any) => {
+  return apiRequest(`/products/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(data),
+  });
+};
+
+export const fetchStockHistory = async (id: string) => {
+  return apiRequest(`/products/${id}/stock-history`);
+};
+
+export const deleteProduct = async (id: string) => {
+  return apiRequest(`/products/${id}`, {
+    method: 'DELETE',
+  });
+};
+
+export const duplicateProduct = async (id: string) => {
+  return apiRequest(`/products/${id}/duplicate`, {
+    method: 'POST',
+  });
+};
+
+// Product Images
+export const uploadProductImages = async (id: string, files: FileList) => {
+  const formData = new FormData();
+  Array.from(files).forEach((file) => {
+    formData.append('images', file);
+  });
+
+  return apiRequest(`/products/${id}/images`, {
+    method: 'POST',
+    body: formData,
+    headers: {},
+  });
+};
+
+export const deleteProductImage = async (id: string, imageUrl: string) => {
+  return apiRequest(`/products/${id}/images`, {
+    method: 'DELETE',
+    body: JSON.stringify({ imageUrl }),
+  });
+};
+
+// Barcode
+export const generateBarcode = async (id: string) => {
+  return apiRequest(`/products/${id}/barcode`);
+};
+
+// Notifications
+export const fetchNotifications = async (params?: { read?: boolean; dismissed?: boolean }) => {
+  const query = new URLSearchParams();
+  if (params?.read !== undefined) query.append('read', String(params.read));
+  if (params?.dismissed !== undefined) query.append('dismissed', String(params.dismissed));
+  
+  return apiRequest(`/notifications?${query.toString()}`);
+};
+
+export const markNotificationAsRead = async (id: string) => {
+  return apiRequest(`/notifications/${id}/read`, {
+    method: 'PATCH',
+  });
+};
+
+export const markAllNotificationsAsRead = async () => {
+  return apiRequest('/notifications/read-all', {
+    method: 'PATCH',
+  });
+};
+
+export const dismissNotification = async (id: string) => {
+  return apiRequest(`/notifications/${id}/dismiss`, {
+    method: 'PATCH',
+  });
+};
+
+export const deleteNotification = async (id: string) => {
+  return apiRequest(`/notifications/${id}`, {
+    method: 'DELETE',
+  });
+};
+
+export const getNotificationSettings = async () => {
+  return apiRequest('/notifications/settings');
+};
+
+export const updateNotificationSettings = async (settings: any) => {
+  return apiRequest('/notifications/settings', {
+    method: 'PUT',
+    body: JSON.stringify(settings),
+  });
+};
+
+export const triggerNotificationCheck = async () => {
+  return apiRequest('/notifications/check', {
+    method: 'POST',
+  });
+};
+
+export { API_URL, testApiConnection };

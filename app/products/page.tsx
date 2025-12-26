@@ -1,9 +1,58 @@
+"use client";
+
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { fetchProducts } from "@/lib/api";
-import Link from "next/link";
 import styles from "./Products.module.css";
 
-export default async function Products() {
-  const products = await fetchProducts();
+export default function Products() {
+  const [products, setProducts] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadProducts = async () => {
+      try {
+        setIsLoading(true);
+        const data = await fetchProducts();
+        setProducts(data);
+        setError(null);
+      } catch (err) {
+        console.error('Error loading products:', err);
+        setError(err instanceof Error ? err.message : 'Failed to load products');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadProducts();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.loading}>Loading products...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.errorContainer}>
+          <h2>Error Loading Products</h2>
+          <p>{error}</p>
+          <p>Please check if the backend server is running at {process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}</p>
+          <button 
+            onClick={() => window.location.reload()} 
+            className={styles.retryButton}
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.container}>
