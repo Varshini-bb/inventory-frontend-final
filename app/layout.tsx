@@ -1,40 +1,24 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import NotificationBell from "@/components/NotificationBell";
+import { NotificationProvider } from "@/contexts/NotificationContext";
+import ServiceWorkerInitializer from "@/components/ServiceWorkerInitializer";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-export const metadata: Metadata = {
-  title: "Inventory Management System",
-  description: "Manage your inventory efficiently",
-};
-
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <div style={{ 
-          position: 'fixed', 
-          top: '1rem', 
-          right: '1rem', 
-          zIndex: 1000 
-        }}>
-          <NotificationBell />
-        </div>
-        {children}
+      <body>
+        <ServiceWorkerInitializer />
+        <NotificationProvider>
+          {/* Header with Notification Bell */}
+          <header className="bg-white border-b border-gray-200 px-6 py-4 sticky top-0 z-40 shadow-sm">
+            <div className="max-w-7xl mx-auto flex items-center justify-between">
+              <h1 className="text-2xl font-bold text-gray-900">Inventory Management</h1>
+            
+            </div>
+          </header>
+
+          {/* Main Content */}
+          <main>{children}</main>
+        </NotificationProvider>
       </body>
     </html>
   );

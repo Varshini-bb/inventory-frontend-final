@@ -10,10 +10,12 @@ type SortOption = "name-asc" | "name-desc" | "quantity-asc" | "quantity-desc" | 
 type StatusFilter = "all" | "in-stock" | "low-stock" | "out-of-stock";
 
 export default function Products() {
-  const { data: products, error } = useSWR(
+  const { data, error } = useSWR(
     `${process.env.NEXT_PUBLIC_API_URL}/products`,
     fetchProducts
   );
+
+  const products = data && Array.isArray(data) ? data : null;
 
   // State
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -224,6 +226,14 @@ export default function Products() {
               Dashboard
             </Link>
 
+            {/* ADD THIS: Notification Bell Button */}
+            <Link href="/notifications" className={styles.notificationsButton}>
+              <svg className={styles.iconWhite} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+              </svg>
+              Notifications
+            </Link>
+
             <Link href="/reports/low-stock" className={styles.lowStockButton}>
               <svg className={styles.iconWhite} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
@@ -247,6 +257,7 @@ export default function Products() {
           </div>
         </div>
 
+        {/* Rest of the component stays the same... */}
         {/* Search and Filters */}
         <div className={styles.filterSection}>
           {/* Search Bar */}
@@ -353,7 +364,7 @@ export default function Products() {
           </div>
         )}
 
-        {/* Products Grid */}
+        {/* Products Grid - continues as before... */}
         {filteredAndSortedProducts.length === 0 ? (
           <div className={styles.emptyState}>
             <div className={styles.emptyContent}>
@@ -508,7 +519,7 @@ export default function Products() {
                         {deletingId === p._id ? "..." : "Delete"}
                       </button>
 
-                      <Link href={`/stock/${p._id}`} className={styles.stockButton} title="Manage Stock">
+                      <Link href={`/products/${p._id}`} className={styles.stockButton} title="Manage Stock">
                         <svg className={styles.iconSmall} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
                         </svg>

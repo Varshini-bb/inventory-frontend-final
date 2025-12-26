@@ -1,72 +1,182 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+
+// Test API connection
+const testApiConnection = async () => {
+  try {
+    const response = await fetch(`${API_URL}/api/products`); // ← Fixed
+    console.log('API Connection Test:', response.status, response.statusText);
+  } catch (error) {
+    console.error('API Connection Error:', error);
+  }
+};
+
+testApiConnection();
 
 // Dashboard
-export const fetchDashboard = async () =>
-  fetch(`${API_URL}/dashboard`).then(res => res.json());
+export const fetchDashboard = async () => {
+  console.log("=== FETCH DASHBOARD CALLED ===");
+  console.log("API_URL:", API_URL);
+  const res = await fetch(`${API_URL}/api/dashboard`);
+  console.log("Response:", res.status);
+  if (!res.ok) {
+    throw new Error('Failed to fetch dashboard data');
+  }
+  return res.json();
+};
 
 // Products
-export const fetchProducts = async () =>
-  fetch(`${API_URL}/products`, { cache: "no-store" }).then(res => res.json());
+export const fetchProducts = async () => {
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
+    
+    const res = await fetch(`${API_URL}/api/products`, { // ← Fixed
+      signal: controller.signal,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
 
-export const fetchProduct = async (id: string) =>
-  fetch(`${API_URL}/products/${id}`, { cache: "no-store" }).then(res => res.json());
+    clearTimeout(timeoutId);
 
-export async function createProduct(data: {
-  name: string;
-  sku: string;
-  quantity?: number;
-  lowStockThreshold?: number;
-  description?: string;
-  category?: string;
-  tags?: string[];
-  unit?: string;
-  costPrice?: number;
-  sellingPrice?: number;
-  hasVariants?: boolean;
-  variants?: any[];
-}) {
-  const res = await fetch(`${API_URL}/products`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+
+    const data = await res.json();
+    return data;
+  } catch (error: any) {
+    if (error.name === 'AbortError') {
+      console.error('Request timeout');
+    } else {
+      console.error('Error fetching products:', error);
+    }
+    throw error;
+  }
+};
+
+export const fetchProduct = async (id: string) => {
+  try {
+    const res = await fetch(`${API_URL}/api/products/${id}`); // ← Fixed
+    
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+
+    return await res.json();
+  } catch (error) {
+    console.error('Error fetching product:', error);
+    throw error;
+  }
+};
+
+export const createProduct = async (productData: any) => {
+  try {
+    const res = await fetch(`${API_URL}/api/products`, { // ← Fixed
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(productData),
+    });
+
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+
+    return await res.json();
+  } catch (error) {
+    console.error('Error creating product:', error);
+    throw error;
+  }
+};
+
+export const updateProduct = async (id: string, productData: any) => {
+  try {
+    const res = await fetch(`${API_URL}/api/products/${id}`, { // ← Fixed
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(productData),
+    });
+
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+
+    return await res.json();
+  } catch (error) {
+    console.error('Error updating product:', error);
+    throw error;
+  }
+};
+// Stock Management
+// Stock Management
+export const updateStock = async (data: {
+  productId: string;
+  type: "IN" | "OUT";
+  quantity: number;
+  note?: string;
+}) => {
+  const url = `${API_URL}/api/stock`;
+  console.log('Making request to:', url);
+  console.log('Request data:', data);
+  
+  try {
+    const res = await fetch(url, { // ← Already correct
+      method: "POST",
+      headers: { 
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
+      body: JSON.stringify(data),
+    });
+
+    console.log('Response status:', res.status);
+    
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({}));
+      console.error('Error response:', errorData);
+      throw new Error(errorData.error || `HTTP error! status: ${res.status}`);
+    }
+
+    return await res.json();
+  } catch (error) {
+    console.error('Update stock error:', error);
+    throw error;
+  }
+};
+
+export const fetchStockHistory = async (id: string) => {
+  const res = await fetch(`${API_URL}/api/stock/${id}`, { 
+    cache: "no-store" 
   });
 
   if (!res.ok) {
-    throw new Error("Failed to create product");
+    const error = await res.json();
+    throw new Error(error.error || 'Failed to fetch stock history');
   }
 
   return res.json();
-}
+};
 
-export async function updateProduct(id: string, data: any) {
-  const res = await fetch(`${API_URL}/products/${id}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  });
+export const deleteProduct = async (id: string) => {
+  try {
+    const res = await fetch(`${API_URL}/api/products/${id}`, { // ← Fixed
+      method: 'DELETE',
+    });
 
-  if (!res.ok) {
-    throw new Error("Failed to update product");
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+
+    return await res.json();
+  } catch (error) {
+    console.error('Error deleting product:', error);
+    throw error;
   }
-
-  return res.json();
-}
-
-export async function deleteProduct(id: string) {
-  const res = await fetch(`${API_URL}/products/${id}`, {
-    method: "DELETE",
-  });
-
-  if (!res.ok) {
-    throw new Error("Failed to delete product");
-  }
-
-  return res.json();
-}
+};
 
 export async function duplicateProduct(id: string) {
   const res = await fetch(`${API_URL}/products/${id}/duplicate`, {
@@ -142,25 +252,6 @@ export async function generateBarcode(id: string) {
 
   return res.json();
 }
-
-// Stock Management
-export const updateStock = async (data: {
-  productId: string;
-  type: "IN" | "OUT";
-  quantity: number;
-  note?: string;
-}) =>
-  fetch(`${API_URL}/stock`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  }).then((res) => res.json());
-
-export const fetchStockHistory = async (id: string) =>
-  fetch(`${API_URL}/stock/${id}`, { cache: "no-store" }).then((res) =>
-    res.json()
-  );
-
 
 // Notifications
 export const fetchNotifications = async (params?: { read?: boolean; dismissed?: boolean }) => {

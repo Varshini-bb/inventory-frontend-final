@@ -18,8 +18,12 @@ export default function StockPage() {
 
   const loadHistory = async () => {
     if (!id) return;
-    const data = await fetchStockHistory(id);
-    setHistory(data);
+    try {
+      const data = await fetchStockHistory(id);
+      setHistory(data);
+    } catch (error) {
+      console.error("Failed to load history:", error);
+    }
   };
 
   useEffect(() => {
@@ -27,24 +31,43 @@ export default function StockPage() {
   }, [id]);
 
   const submit = async () => {
-    if (qty <= 0) return;
+    if (qty <= 0) {
+      alert("Please enter a quantity greater than 0");
+      return;
+    }
 
     setLoading(true);
 
-    await updateStock({
-      productId: id,
-      type,
-      quantity: qty,
-      note,
-    });
+    try {
+      console.log("📦 Submitting stock update...");
+      console.log("Data:", { productId: id, type, quantity: qty, note });
+      
+      const result = await updateStock({
+        productId: id,
+        type,
+        quantity: qty,
+        note,
+      });
 
-    await loadHistory();
-    mutate(`${process.env.NEXT_PUBLIC_API_URL}/products`);
+      console.log("✅ Stock update successful:", result);
 
-    setQty(0);
-    setNote("");
+      // Reload history
+      await loadHistory();
 
-    setLoading(false);
+      // Invalidate products cache
+      mutate(`${process.env.NEXT_PUBLIC_API_URL}/api/products`);
+
+      // Reset form
+      setQty(0);
+      setNote("");
+
+      alert(`Stock ${type === "IN" ? "added" : "removed"} successfully!`);
+    } catch (error: any) {
+      console.error("❌ Stock update error:", error);
+      alert("Failed to update stock: " + (error.message || "Unknown error"));
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

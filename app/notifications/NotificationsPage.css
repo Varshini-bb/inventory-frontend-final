@@ -1,0 +1,849 @@
+/* ============================================
+   NOTIFICATION BELL COMPONENT
+   ============================================ */
+
+.notification-bell-container {
+  position: relative;
+}
+
+.notification-bell-button {
+  position: relative;
+  padding: 0.5rem;
+  border-radius: 9999px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.notification-bell-button:hover {
+  background-color: #f3f4f6;
+}
+
+.notification-bell-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: #374151;
+}
+
+.notification-bell-icon.ringing {
+  animation: ring 2s ease-in-out infinite;
+}
+
+.notification-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background-color: #ef4444;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: bold;
+  border-radius: 9999px;
+  width: 1.25rem;
+  height: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: bounce 1s infinite;
+}
+
+.notification-dropdown {
+  position: absolute;
+  right: 0;
+  margin-top: 0.5rem;
+  width: 24rem;
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  border: 1px solid #e5e7eb;
+  z-index: 50;
+  max-height: 600px;
+  display: flex;
+  flex-direction: column;
+  animation: slideDown 0.2s ease-out;
+}
+
+.notification-header {
+  padding: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #f9fafb;
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
+}
+
+.notification-header-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+.notification-header-subtitle {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+.mark-all-read-button {
+  font-size: 0.875rem;
+  color: #3b82f6;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.mark-all-read-button:hover {
+  color: #1e40af;
+}
+
+.notification-list {
+  overflow-y: auto;
+  flex: 1;
+}
+
+.notification-empty {
+  padding: 2rem;
+  text-align: center;
+  color: #6b7280;
+}
+
+.notification-empty-icon {
+  width: 3rem;
+  height: 3rem;
+  margin: 0 auto 0.75rem;
+  color: #d1d5db;
+}
+
+.notification-empty-title {
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: #111827;
+  margin-bottom: 0.5rem;
+}
+
+.notification-empty-text {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.notification-item {
+  padding: 1rem;
+  border-bottom: 1px solid #f3f4f6;
+  transition: background-color 0.2s ease;
+}
+
+.notification-item:hover {
+  background-color: #f9fafb;
+}
+
+.notification-item.unread {
+  background-color: #eff6ff;
+  border-left: 3px solid #3b82f6;
+}
+
+.notification-content {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.notification-icon {
+  flex-shrink: 0;
+  font-size: 1.5rem;
+}
+
+.notification-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.notification-title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.notification-title {
+  font-weight: 600;
+  color: #111827;
+  font-size: 0.875rem;
+}
+
+.notification-mark-read-btn {
+  color: #3b82f6;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.notification-mark-read-btn:hover {
+  color: #1e40af;
+}
+
+.notification-message {
+  font-size: 0.875rem;
+  color: #374151;
+  margin-bottom: 0.5rem;
+}
+
+.notification-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.notification-priority {
+  font-size: 0.625rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  border: 1px solid;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.notification-priority.urgent {
+  background-color: #fef2f2;
+  border-color: #ef4444;
+  color: #991b1b;
+}
+
+.notification-priority.high {
+  background-color: #fff7ed;
+  border-color: #f97316;
+  color: #9a3412;
+}
+
+.notification-priority.medium {
+  background-color: #fefce8;
+  border-color: #eab308;
+  color: #854d0e;
+}
+
+.notification-priority.low {
+  background-color: #eff6ff;
+  border-color: #3b82f6;
+  color: #1e40af;
+}
+
+.notification-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.notification-time {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.notification-delete-btn {
+  color: #9ca3af;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.notification-delete-btn:hover {
+  color: #ef4444;
+}
+
+.notification-product-info {
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  background-color: #f9fafb;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  border-left: 2px solid #e5e7eb;
+}
+
+.notification-product-name {
+  font-weight: 600;
+  color: #111827;
+  display: block;
+}
+
+.notification-product-sku {
+  color: #6b7280;
+  display: block;
+  margin-top: 0.125rem;
+}
+
+.notification-footer {
+  padding: 0.75rem;
+  border-top: 1px solid #e5e7eb;
+  background-color: #f9fafb;
+  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+}
+
+.notification-footer-link {
+  display: block;
+  text-align: center;
+  font-size: 0.875rem;
+  color: #3b82f6;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.notification-footer-link:hover {
+  color: #1e40af;
+}
+
+/* ============================================
+   NOTIFICATION SETTINGS COMPONENT
+   ============================================ */
+
+.notification-settings-card {
+  background-color: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+}
+
+.settings-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.settings-title-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.settings-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: #3b82f6;
+}
+
+.settings-title {
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+.settings-subtitle {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+.settings-enabled-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.875rem;
+  color: #059669;
+  font-weight: 500;
+}
+
+.settings-enable-button {
+  width: 100%;
+  background-color: #3b82f6;
+  color: white;
+  font-weight: 500;
+  padding: 0.625rem 1rem;
+  border-radius: 0.5rem;
+  transition: background-color 0.3s ease;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.settings-enable-button:hover {
+  background-color: #1e40af;
+}
+
+.settings-enabled-info {
+  background-color: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  font-size: 0.875rem;
+  color: #166534;
+}
+
+.settings-info-list {
+  margin-top: 0.5rem;
+  margin-bottom: 0;
+  margin-left: 1rem;
+}
+
+.settings-info-list li {
+  margin-bottom: 0.25rem;
+}
+
+.settings-warning {
+  background-color: #fefce8;
+  border: 1px solid #fde047;
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+.settings-warning-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.settings-warning-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: #ca8a04;
+  flex-shrink: 0;
+  margin-top: 0.125rem;
+}
+
+.settings-warning-title {
+  font-weight: 600;
+  color: #854d0e;
+  margin-bottom: 0.25rem;
+}
+
+.settings-warning-text {
+  font-size: 0.875rem;
+  color: #a16207;
+}
+
+/* ============================================
+   NOTIFICATIONS PAGE
+   ============================================ */
+
+.notifications-page {
+  min-height: 100vh;
+  background-color: #f9fafb;
+  padding: 1.5rem;
+}
+
+.notifications-container {
+  max-width: 80rem;
+  margin: 0 auto;
+}
+
+.page-header {
+  margin-bottom: 2rem;
+}
+
+.page-title {
+  font-size: 1.875rem;
+  font-weight: bold;
+  color: #111827;
+  margin-bottom: 0.5rem;
+}
+
+.page-subtitle {
+  color: #6b7280;
+}
+
+.settings-wrapper {
+  margin-bottom: 1.5rem;
+}
+
+.filters-card {
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.filters-container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+}
+
+.filter-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.filter-icon {
+  width: 1rem;
+  height: 1rem;
+  color: #6b7280;
+}
+
+.filter-text {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.filter-buttons {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.filter-button {
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.filter-button.active {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.filter-button.inactive {
+  background-color: #f3f4f6;
+  color: #374151;
+}
+
+.filter-button.inactive:hover {
+  background-color: #e5e7eb;
+}
+
+.mark-all-filters {
+  margin-left: auto;
+  font-size: 0.875rem;
+  color: #3b82f6;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.mark-all-filters:hover {
+  color: #1e40af;
+}
+
+.notifications-card {
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+}
+
+.loading-container {
+  padding: 3rem;
+  text-align: center;
+}
+
+.loading-spinner {
+  animation: spin 1s linear infinite;
+  border-radius: 9999px;
+  height: 3rem;
+  width: 3rem;
+  border: 2px solid #e5e7eb;
+  border-top-color: #3b82f6;
+  margin: 0 auto;
+}
+
+.loading-text {
+  margin-top: 1rem;
+  color: #6b7280;
+}
+
+.empty-state {
+  padding: 3rem;
+  text-align: center;
+}
+
+.empty-icon {
+  width: 4rem;
+  height: 4rem;
+  margin: 0 auto 1rem;
+  color: #d1d5db;
+}
+
+.empty-title {
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: #111827;
+  margin-bottom: 0.5rem;
+}
+
+.empty-description {
+  color: #6b7280;
+}
+
+.notifications-list {
+  border-top: 1px solid #e5e7eb;
+}
+
+.notification-list-item {
+  padding: 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+  transition: background-color 0.2s ease;
+}
+
+.notification-list-item:hover {
+  background-color: #f9fafb;
+}
+
+.notification-list-item.unread {
+  background-color: #eff6ff;
+  border-left: 3px solid #3b82f6;
+}
+
+.notification-row {
+  display: flex;
+  gap: 1rem;
+}
+
+.type-icon {
+  flex-shrink: 0;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+}
+
+.type-icon.low-stock {
+  color: #f97316;
+  background-color: #fff7ed;
+}
+
+.type-icon.expiry-alert {
+  color: #ef4444;
+  background-color: #fef2f2;
+}
+
+.type-icon.reorder-reminder {
+  color: #3b82f6;
+  background-color: #eff6ff;
+}
+
+.type-icon.stock-out {
+  color: #7f1d1d;
+  background-color: #fee2e2;
+}
+
+.notification-body {
+  flex: 1;
+}
+
+.notification-header-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.notification-heading {
+  font-weight: 600;
+  color: #111827;
+  font-size: 1.125rem;
+}
+
+.notification-message-text {
+  color: #374151;
+  margin-top: 0.25rem;
+}
+
+.action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: 1rem;
+}
+
+.action-button {
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  transition: background-color 0.2s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.action-button.mark-read {
+  color: #3b82f6;
+}
+
+.action-button.mark-read:hover {
+  background-color: #dbeafe;
+}
+
+.action-button.delete {
+  color: #ef4444;
+}
+
+.action-button.delete:hover {
+  background-color: #fee2e2;
+}
+
+.product-info-card {
+  background-color: #f3f4f6;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  margin-bottom: 0.75rem;
+  border-left: 2px solid #e5e7eb;
+}
+
+.product-info-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.product-name {
+  font-weight: 600;
+  color: #111827;
+  display: block;
+}
+
+.product-sku {
+  font-size: 0.875rem;
+  color: #6b7280;
+  display: block;
+  margin-top: 0.125rem;
+}
+
+.product-link {
+  font-size: 0.875rem;
+  color: #3b82f6;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.product-link:hover {
+  color: #1e40af;
+}
+
+.notification-metadata {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.875rem;
+}
+
+.priority-badge {
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  border: 1px solid;
+  font-weight: 600;
+  font-size: 0.625rem;
+  letter-spacing: 0.05em;
+}
+
+.priority-badge.urgent {
+  background-color: #fef2f2;
+  border-color: #ef4444;
+  color: #991b1b;
+}
+
+.priority-badge.high {
+  background-color: #fff7ed;
+  border-color: #f97316;
+  color: #9a3412;
+}
+
+.priority-badge.medium {
+  background-color: #fefce8;
+  border-color: #eab308;
+  color: #854d0e;
+}
+
+.priority-badge.low {
+  background-color: #eff6ff;
+  border-color: #3b82f6;
+  color: #1e40af;
+}
+
+.notification-timestamp {
+  color: #6b7280;
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+
+@keyframes ring {
+  0%, 100% { transform: rotate(0deg); }
+  10% { transform: rotate(15deg); }
+  20% { transform: rotate(-15deg); }
+  30% { transform: rotate(10deg); }
+  40% { transform: rotate(-10deg); }
+  50% { transform: rotate(5deg); }
+  60% { transform: rotate(-5deg); }
+  70% { transform: rotate(0deg); }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 768px) {
+  .notifications-page {
+    padding: 1rem;
+  }
+
+  .notification-dropdown {
+    width: 20rem;
+  }
+
+  .filter-buttons {
+    width: 100%;
+  }
+
+  .filter-button {
+    flex: 1;
+  }
+
+  .notification-header-row {
+    flex-direction: column;
+  }
+
+  .action-buttons {
+    margin-left: 0;
+    margin-top: 0.5rem;
+  }
+}
